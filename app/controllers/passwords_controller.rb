@@ -14,12 +14,36 @@ class PasswordsController < ApplicationController
   end
 
   def create
-    @password = current_user.passwords.create(password_params)
-    if @password.persisted?
+    # @password = current_user.passwords.create(password_params)
+    # if @password.persisted?
+    #   redirect_to @password
+    # else
+    #   render :new, status: :unprocessable_entity
+    # end
+
+    @password = Password.new(password_params)
+    @password.user_passwords.new(user: current_user)
+    if @password.save
       redirect_to @password
     else
       render :new, status: :unprocessable_entity
     end
+
+    def edit
+    end
+  end
+
+  def update
+    if @password.update(password_params)
+      redirect_to @password
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @password.destroy
+    redirect_to root_path
   end
 
   private
